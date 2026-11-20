@@ -1,0 +1,249 @@
+{
+  "name": "Strapi 5 Headless CMS (Postgres, S3 Bucket)",
+  "description": "Headless CMS with REST API, admin panel and media in a Railway Bucket.",
+  "category": "CMS",
+  "tags": [
+    "strapi",
+    "headless-cms",
+    "cms",
+    "rest-api",
+    "postgres",
+    "s3",
+    "nodejs",
+    "content-api"
+  ],
+  "image": "https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/svg/strapi.svg",
+  "upstream": {
+    "repo": "strapi/strapi",
+    "version": "v5.63.0",
+    "images": {
+      "node": "node:22.23.5-alpine3.23@sha256:6868d4695b947ee120bffaa463fecd68cde370d7bfec92955e7c8ac576b4f475",
+      "postgres": "ghcr.io/railwayapp-templates/postgres-ssl:18.6 (Railway base)"
+    },
+    "npm": "@strapi/strapi 5.63.0, @strapi/plugin-users-permissions 5.63.0, @strapi/provider-upload-aws-s3 5.63.0, pg 8.20.0 (package-lock.json)",
+    "checked": "2026-11-20"
+  },
+  "services": {
+    "Strapi": {
+      "icon": "https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/svg/strapi.svg",
+      "source": {
+        "repo": "baranberkay96/strapi-railway",
+        "rootDirectory": "/services/strapi"
+      },
+      "startCommand": null,
+      "preDeployCommand": null,
+      "healthcheckPath": "/_health",
+      "healthcheckTimeout": 900,
+      "restartPolicyType": "ON_FAILURE",
+      "restartPolicyMaxRetries": 10,
+      "numReplicas": 1,
+      "cronSchedule": null,
+      "publicDomain": true,
+      "targetPort": 1337,
+      "tcpProxy": null,
+      "volume": null,
+      "variables": {
+        "PORT": {
+          "defaultValue": "1337",
+          "description": "HTTP port of the Strapi API and admin panel (domain target and healthcheck).",
+          "required": false
+        },
+        "HOST": {
+          "defaultValue": "::",
+          "description": "Listen address. :: accepts IPv4 and IPv6 (Railway private network).",
+          "required": false
+        },
+        "PUBLIC_URL": {
+          "defaultValue": "https://${{RAILWAY_PUBLIC_DOMAIN}}",
+          "description": "Public URL of Strapi (admin links, e-mails). Change it when you add a custom domain.",
+          "required": false
+        },
+        "ADMIN_EMAIL": {
+          "defaultValue": "admin@example.com",
+          "description": "E-mail (login) of the first super admin, created on the first start. Change it before deploying or later in the admin panel.",
+          "required": false
+        },
+        "ADMIN_PASSWORD": {
+          "defaultValue": "${{secret(24, \"abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789\")}}aA1",
+          "description": "Password of the first super admin (8-72 bytes, upper and lower case and a digit). Generated; read it here to log in.",
+          "required": false
+        },
+        "ADMIN_FIRSTNAME": {
+          "defaultValue": "Admin",
+          "description": "First name of the first super admin.",
+          "required": false
+        },
+        "RESET_ADMIN_PASSWORD": {
+          "defaultValue": "false",
+          "description": "true = on the next start, set the password of ADMIN_EMAIL to ADMIN_PASSWORD. Set back to false afterwards.",
+          "required": false
+        },
+        "APP_KEYS": {
+          "defaultValue": "${{secret(32, \"abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789\")}},${{secret(32, \"abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789\")}}",
+          "description": "Session keys (comma-separated). Generated.",
+          "required": false
+        },
+        "ADMIN_JWT_SECRET": {
+          "defaultValue": "${{secret(32, \"abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789\")}}",
+          "description": "Signs admin panel sessions. Changing it signs admins out.",
+          "required": false
+        },
+        "API_TOKEN_SALT": {
+          "defaultValue": "${{secret(32, \"abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789\")}}",
+          "description": "Salt for API tokens. Changing it invalidates existing API tokens.",
+          "required": false
+        },
+        "TRANSFER_TOKEN_SALT": {
+          "defaultValue": "${{secret(32, \"abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789\")}}",
+          "description": "Salt for data transfer tokens.",
+          "required": false
+        },
+        "JWT_SECRET": {
+          "defaultValue": "${{secret(32, \"abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789\")}}",
+          "description": "Signs end-user (Users & Permissions) tokens.",
+          "required": false
+        },
+        "ENCRYPTION_KEY": {
+          "defaultValue": "${{secret(32, \"abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789\")}}",
+          "description": "Encrypts API tokens so they can be shown again in the admin panel.",
+          "required": false
+        },
+        "DATABASE_URL": {
+          "defaultValue": "${{Postgres.DATABASE_URL}}",
+          "description": "Postgres on the private network. Tables are created and migrated on start.",
+          "required": false
+        },
+        "DATABASE_SSL": {
+          "defaultValue": "false",
+          "description": "Traffic stays on Railway's private network.",
+          "required": false
+        },
+        "S3_ACCESS_KEY_ID": {
+          "defaultValue": "${{Bucket.ACCESS_KEY_ID}}",
+          "description": "Railway Bucket access key (media library).",
+          "required": false
+        },
+        "S3_SECRET_ACCESS_KEY": {
+          "defaultValue": "${{Bucket.SECRET_ACCESS_KEY}}",
+          "description": "Railway Bucket secret key.",
+          "required": false
+        },
+        "S3_BUCKET": {
+          "defaultValue": "${{Bucket.BUCKET}}",
+          "description": "Railway Bucket name.",
+          "required": false
+        },
+        "S3_REGION": {
+          "defaultValue": "${{Bucket.REGION}}",
+          "description": "Railway Bucket region.",
+          "required": false
+        },
+        "S3_ENDPOINT": {
+          "defaultValue": "${{Bucket.ENDPOINT}}",
+          "description": "Railway Bucket S3 endpoint.",
+          "required": false
+        },
+        "S3_SIGNED_URL_EXPIRES": {
+          "defaultValue": "900",
+          "description": "Lifetime in seconds of the signed media URLs Strapi returns (the Bucket is private).",
+          "required": false
+        },
+        "STRAPI_TELEMETRY_DISABLED": {
+          "defaultValue": "true",
+          "description": "No usage data is sent to Strapi.",
+          "required": false
+        },
+        "STRAPI_DISABLE_UPDATE_NOTIFICATION": {
+          "defaultValue": "true",
+          "description": "No update check on start.",
+          "required": false
+        }
+      }
+    },
+    "Postgres": {
+      "icon": "https://devicons.railway.app/i/postgresql.svg",
+      "source": {
+        "image": "ghcr.io/railwayapp-templates/postgres-ssl:18.6@sha256:4fc833b43d2aaf6ecc9b18615f5533602b723a32d0e2efe2dae8ca0f7217c863"
+      },
+      "startCommand": null,
+      "preDeployCommand": null,
+      "healthcheckPath": null,
+      "healthcheckTimeout": null,
+      "restartPolicyType": "ON_FAILURE",
+      "restartPolicyMaxRetries": 10,
+      "numReplicas": 1,
+      "cronSchedule": null,
+      "publicDomain": false,
+      "targetPort": null,
+      "tcpProxy": null,
+      "volume": {
+        "mountPath": "/var/lib/postgresql/data"
+      },
+      "variables": {
+        "PGDATA": {
+          "defaultValue": "/var/lib/postgresql/data/pgdata",
+          "description": "Location where the database will be initialized",
+          "required": false
+        },
+        "PGHOST": {
+          "defaultValue": "${{RAILWAY_PRIVATE_DOMAIN}}",
+          "description": "Railway Private Domain Name.",
+          "required": false
+        },
+        "PGPORT": {
+          "defaultValue": "5432",
+          "description": "Port to connect to Postgres.",
+          "required": false
+        },
+        "PGUSER": {
+          "defaultValue": "${{ POSTGRES_USER }}",
+          "description": "Required variable for Data panel",
+          "required": false
+        },
+        "PGDATABASE": {
+          "defaultValue": "${{POSTGRES_DB}}",
+          "description": "Required variable for the data panel.",
+          "required": false
+        },
+        "PGPASSWORD": {
+          "defaultValue": "${{POSTGRES_PASSWORD}}",
+          "description": "Required variable for Data panel",
+          "required": false
+        },
+        "POSTGRES_DB": {
+          "defaultValue": "railway",
+          "description": "Default database created when image is started.",
+          "required": false
+        },
+        "DATABASE_URL": {
+          "defaultValue": "postgresql://${{PGUSER}}:${{POSTGRES_PASSWORD}}@${{RAILWAY_PRIVATE_DOMAIN}}:5432/${{PGDATABASE}}",
+          "description": "Private connection URL used by Strapi.",
+          "required": false
+        },
+        "POSTGRES_USER": {
+          "defaultValue": "postgres",
+          "description": "User to connect to Postgres DB",
+          "required": false
+        },
+        "SSL_CERT_DAYS": {
+          "defaultValue": "820",
+          "description": "SSL certificate expiry in days.",
+          "required": false
+        },
+        "POSTGRES_PASSWORD": {
+          "defaultValue": "${{ secret(32, \"abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ\") }}",
+          "description": "Password to connect to DB",
+          "required": false
+        },
+        "RAILWAY_DEPLOYMENT_DRAINING_SECONDS": {
+          "defaultValue": "60",
+          "description": "Allow Postgres to cleanly shut down",
+          "required": false
+        }
+      }
+    }
+  },
+  "buckets": [
+    "Bucket"
+  ]
+}
