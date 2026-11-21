@@ -1,5 +1,7 @@
 # Deploy and Host Strapi with Railway
 
+[![Deploy on Railway](https://railway.com/button.svg)](https://railway.com/deploy/strapi-5-headless-cms-postgres-s3-bucket?referralCode=20H68q)
+
 Strapi is an open-source headless CMS: you model content types, editors manage content in the admin panel, and your apps read it through a REST API. This community template runs a Strapi 5 project with Postgres 18 on Railway, stores the media library in a Railway Bucket and creates the first super admin for you.
 
 ## About Hosting Strapi
